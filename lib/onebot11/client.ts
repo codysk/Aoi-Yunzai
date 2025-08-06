@@ -167,7 +167,7 @@ export class Client extends EventEmitter {
 
     async refreshFriendList() {
         let res: {[key: string]: any}[] = await this.invoke("get_friend_list", {})
-        this.fl = new Map(res.map(friend => [friend.user_id, new User(
+        this.fl = new Map(res.map(friend => [`${friend.user_id}`, new User(
             this, 
             friend
         )]))
@@ -175,17 +175,17 @@ export class Client extends EventEmitter {
     }
 
     pickUser(user_id: string): User | null {
-        return this.fl.get(user_id) || null;
+        return this.fl.get(`${user_id}`) || null;
     }
 
     async refreshGroupList() {
         let res: {[key: string]: any}[] = await this.invoke("get_group_list", {})
-        this.gl = new Map(res.map(group => [group.group_id, new Group(this, group)]))
+        this.gl = new Map(res.map(group => [`${group.group_id}`, new Group(this, group)]))
         return this.gl
     }
 
     pickGroup(group_id: string): Group | null {
-        return this.gl.get(group_id) || null;
+        return this.gl.get(`${group_id}`) || null;
     }
 
     async getGroupMemberInfo(group_id: string, user_id: string): Promise<User> {
