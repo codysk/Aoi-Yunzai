@@ -13,7 +13,7 @@ ARG BUNDLE_POETRY true
 ARG USE_APT_MIRROR true
 ARG USE_NPM_MIRROR true
 ARG USE_PYPI_MIRROR true
-ARG REPO_URL https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git
+ARG REPO_URL https://cnb.cool/umiaoi/Aoi-Yunzai.git
 ARG REPO_BRANCH master
 
 RUN export BUNDLE_FFMPEG=${BUNDLE_FFMPEG:-true} \
@@ -75,20 +75,20 @@ FROM runtime AS prod
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-RUN REPO_URL=${REPO_URL:-"https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git"} \
+RUN REPO_URL=${REPO_URL:-"https://cnb.cool/umiaoi/Aoi-Yunzai.git"} \
     && REPO_BRANCH=${REPO_BRANCH:-master} \
     && USE_NPM_MIRROR=${USE_NPM_MIRROR:-true} \
     \
     && _NPM_MIRROR_FLAG="" \
     && if [ "$USE_NPM_MIRROR"x = "true"x ]; then _NPM_MIRROR_FLAG="--registry=https://registry.npmmirror.com"; fi \
-    && git clone --depth=1 --branch $REPO_BRANCH $REPO_URL /app/Miao-Yunzai \
-    && cd /app/Miao-Yunzai \
+    && git clone --depth=1 --branch $REPO_BRANCH $REPO_URL /app/Aoi-Yunzai \
+    && cd /app/Aoi-Yunzai \
     && sed -i 's/127.0.0.1/redis/g' ./config/default_config/redis.yaml \
     && pnpm install -P $_NPM_MIRROR_FLAG \
-    && git remote set-url origin https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git
+    && git remote set-url origin https://cnb.cool/umiaoi/Aoi-Yunzai.git
 
-COPY --from=resource /res/entrypoint.sh /app/Miao-Yunzai/entrypoint.sh
+COPY --from=resource /res/entrypoint.sh /app/Aoi-Yunzai/entrypoint.sh
 
-WORKDIR /app/Miao-Yunzai
+WORKDIR /app/Aoi-Yunzai
 
-ENTRYPOINT ["/app/Miao-Yunzai/entrypoint.sh"]
+ENTRYPOINT ["/app/Aoi-Yunzai/entrypoint.sh"]

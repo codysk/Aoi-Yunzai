@@ -11,16 +11,16 @@ Version="${BlueBG}[版本]${Font}"
 Info="${GreenBG}[信息]${Font}"
 Warn="${YellowBG}[提示]${Font}"
 
-WORK_DIR="/app/Miao-Yunzai"
-MIAO_PLUGIN_PATH="/app/Miao-Yunzai/plugins/miao-plugin"
-XIAOYAO_CVS_PATH="/app/Miao-Yunzai/plugins/xiaoyao-cvs-plugin"
-PY_PLUGIN_PATH="/app/Miao-Yunzai/plugins/py-plugin"
+WORK_DIR="/app/Aoi-Yunzai"
+MIAO_PLUGIN_PATH="/app/Aoi-Yunzai/plugins/miao-plugin"
+XIAOYAO_CVS_PATH="/app/Aoi-Yunzai/plugins/xiaoyao-cvs-plugin"
+PY_PLUGIN_PATH="/app/Aoi-Yunzai/plugins/py-plugin"
 
 if [[ ! -d "$HOME/.ovo" ]]; then
     mkdir ~/.ovo
 fi
 
-echo -e "\n ================ \n ${Info} ${GreenBG} 拉取 Miao-Yunzai 更新 ${Font} \n ================ \n"
+echo -e "\n ================ \n ${Info} ${GreenBG} 拉取 Aoi-Yunzai 更新 ${Font} \n ================ \n"
 
 cd $WORK_DIR
 
@@ -36,13 +36,13 @@ fi
 
 if [[ ! -f "$HOME/.ovo/yunzai.ok" ]]; then
     set -e
-    echo -e "\n ================ \n ${Info} ${GreenBG} 更新 Miao-Yunzai 运行依赖 ${Font} \n ================ \n"
+    echo -e "\n ================ \n ${Info} ${GreenBG} 更新 Aoi-Yunzai 运行依赖 ${Font} \n ================ \n"
     pnpm install -P
     touch ~/.ovo/yunzai.ok
     set +e
 fi
 
-echo -e "\n ================ \n ${Version} ${BlueBG} Miao-Yunzai 版本信息 ${Font} \n ================ \n"
+echo -e "\n ================ \n ${Version} ${BlueBG} Aoi-Yunzai 版本信息 ${Font} \n ================ \n"
 
 git log -1 --pretty=format:"%h - %an, %ar (%cd) : %s"
 
@@ -182,13 +182,13 @@ if [ -f "./config/config/redis.yaml" ]; then
     echo -e "\n  修改Redis地址完成~  \n"
 fi
 
-echo -e "\n ================ \n ${Info} ${GreenBG} 启动 Miao-Yunzai ${Font} \n ================ \n"
+echo -e "\n ================ \n ${Info} ${GreenBG} 启动 Aoi-Yunzai ${Font} \n ================ \n"
 
 set +e
 node app
 EXIT_CODE=$?
 
 if [[ $EXIT_CODE != 0 ]]; then
-	echo -e "\n ================ \n ${Warn} ${YellowBG} 启动 Miao-Yunzai 失败 ${Font} \n ================ \n"
+	echo -e "\n ================ \n ${Warn} ${YellowBG} 启动 Aoi-Yunzai 失败 ${Font} \n ================ \n"
 	tail -f /dev/null
 fi

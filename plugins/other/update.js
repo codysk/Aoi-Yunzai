@@ -34,7 +34,7 @@ export class update extends plugin {
       ],
     })
 
-    this.typeName = "Miao-Yunzai"
+    this.typeName = "Aoi-Yunzai"
     this.messages = []
   }
 
@@ -264,7 +264,7 @@ export class update extends plugin {
     return common.makeForwardMsg(
       this.e,
       [log, end],
-      `${plugin || "Miao-Yunzai"} 更新日志，共${line}条`,
+      `${plugin || "Aoi-Yunzai"} 更新日志，共${line}条`,
     )
   }
 

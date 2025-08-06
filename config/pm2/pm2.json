@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "Miao-Yunzai",
+      "name": "Aoi-Yunzai",
       "script": "./app.js",
       "max_memory_restart": "512M",
       "restart_delay": 60000

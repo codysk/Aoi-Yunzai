@@ -17,7 +17,7 @@ app.reg({
         {
           currentVersion,
           changelogs,
-          name: "Miao-Yunzai",
+          name: "Aoi-Yunzai",
           elem: "cryo",
           pluginName: false,
           pluginVersion: false,

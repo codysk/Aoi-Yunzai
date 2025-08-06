@@ -81,6 +81,8 @@ export default class ExportLog extends base {
       yunzaiName = "Yunzai-Bot"
     } else if (yunzaiName == "trss-yunzai") {
       yunzaiName = "TRSS-Yunzai"
+    } else if (yunzaiName == "aoi-yunzai") {
+      yunzaiName = "Aoi-Yunzai"
     } else {
       yunzaiName = _.capitalize(yunzaiName)
     }
