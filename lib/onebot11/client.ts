@@ -9,8 +9,8 @@ export class Client extends EventEmitter {
     private active_ws: WebSocket | null;
     private config: any;
     
-    public fl: Map<string, any>;
-    public gl: Map<string, any>;
+    public fl: Map<number, User>;
+    public gl: Map<number, Group>;
     public uin: string | null;
     public nickname: string | null;
     
@@ -167,25 +167,31 @@ export class Client extends EventEmitter {
 
     async refreshFriendList() {
         let res: {[key: string]: any}[] = await this.invoke("get_friend_list", {})
-        this.fl = new Map(res.map(friend => [`${friend.user_id}`, new User(
+        this.fl = new Map(res.map(friend => [friend.user_id, new User(
             this, 
             friend
         )]))
         return this.fl
     }
 
-    pickUser(user_id: string): User | null {
-        return this.fl.get(`${user_id}`) || null;
+    pickUser(user_id: string|number): User | null {
+        if (typeof user_id === "string") {
+            user_id = parseInt(user_id);
+        }
+        return this.fl.get(user_id) || null;
     }
 
     async refreshGroupList() {
         let res: {[key: string]: any}[] = await this.invoke("get_group_list", {})
-        this.gl = new Map(res.map(group => [`${group.group_id}`, new Group(this, group)]))
+        this.gl = new Map(res.map(group => [group.group_id, new Group(this, group)]))
         return this.gl
     }
 
-    pickGroup(group_id: string): Group | null {
-        return this.gl.get(`${group_id}`) || null;
+    pickGroup(group_id: string|number): Group | null {
+        if (typeof group_id === "string") {
+            group_id = parseInt(group_id);
+        }
+        return this.gl.get(group_id) || null;
     }
 
     async getGroupMemberInfo(group_id: string, user_id: string): Promise<User> {
