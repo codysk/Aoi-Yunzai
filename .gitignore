@@ -146,3 +146,4 @@ yunzai
 /temp/
 /pnpm-lock.yaml
 /entrypoint.sh
+.pnpm-store

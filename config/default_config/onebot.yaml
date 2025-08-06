@@ -1,0 +1,5 @@
+type: normal # normal | reverse
+
+listen: 0.0.0.0:3001 # reverse mode only
+
+url: ws://127.0.0.1:3001 # normal mode only e.g ws://127.0.0.1:3001/?access_token=<KEY>
