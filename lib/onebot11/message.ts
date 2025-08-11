@@ -1,4 +1,4 @@
-export type Sendable = string | TextElem | ImageElem | NodeElem | FileElem;
+export type Sendable = string | TextElem | ImageElem | NodeElem | FileElem | ReplyElem;
 export interface TextElem {
     type: "text";
     data: {
@@ -24,4 +24,11 @@ export interface FileElem {
         file: string;
         name: string;
     };
+};
+
+export interface ReplyElem {
+    type: "reply";
+    data: {
+        id: number;
+    };  
 };

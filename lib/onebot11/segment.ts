@@ -1,5 +1,5 @@
 import fs from "fs";
-import type { NodeElem, Sendable,  TextElem, FileElem} from "./message.ts";
+import type { NodeElem, Sendable,  TextElem, ReplyElem} from "./message.ts";
 
 export const segment = {
     text: (text: string): TextElem => {
@@ -54,6 +54,14 @@ export const segment = {
             data: {
                 file: file,
                 name: name
+            }
+        }
+    },
+    reply: (id: number): ReplyElem => {
+        return {
+            type: "reply",
+            data: {
+                id: id
             }
         }
     }

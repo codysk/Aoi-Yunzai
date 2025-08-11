@@ -4,22 +4,27 @@ import { User } from "./user.ts";
 import { Group } from "./group.ts";
 import type { NodeElem, Sendable } from "./message.ts";
 import { segment } from "./segment.ts";
+import type { Event, EventMap, GroupMessageEvent, MessageEvent, PrivateMessageEvent } from "./event.ts";
 
-export class Client extends EventEmitter {
+export class Client extends EventEmitter<EventMap> {
     private active_ws: WebSocket | null;
     private config: any;
     
     public fl: Map<number, User>;
     public gl: Map<number, Group>;
-    public uin: string | null;
+    public uin: number | null;
     public nickname: string | null;
+
+    private invokeEmitter: EventEmitter;
     
-    constructor(config) {
+    constructor(config: any) {
         super();
         this.active_ws = null
         this.uin = null
         this.config = config
         this.nickname = null
+
+        this.invokeEmitter = new EventEmitter()
 
         // 好友列表
         this.fl = new Map()
@@ -65,21 +70,21 @@ export class Client extends EventEmitter {
         await this.refreshGroupList()
     }
 
-    eventRoute(message) {
-        console.log(`[INFO] Received message: ${message}`)
+    eventRoute(raw_message: string) {
+        console.log(`[INFO] Received message: ${raw_message}`)
         try {
-            message = JSON.parse(message)
-            if (message.sub_type === "connect") {
-                this.emit("connected", message)
+            const event: Event = JSON.parse(raw_message)
+            if (event.sub_type === "connect") {
+                this.emit("connected", event)
             }
             // Invoke Response
-            if (message.echo && message.echo.startsWith("Invoke::")) {
-                this.emit(message.echo, message)
+            if (event.echo && event.echo.startsWith("Invoke::")) {
+                this.invokeEmitter.emit(event.echo, event)
             }
 
             // Message Event
-            if (message.post_type === "message") {
-
+            if (event.post_type === "message") {
+                const message = event as PrivateMessageEvent | GroupMessageEvent;
                 // protocol adapter
                 if (message.message && Array.isArray(message.message)) {
                     for (const msg of message.message) {
@@ -101,6 +106,19 @@ export class Client extends EventEmitter {
                             remark: message.sender.remark || null
                         })
                     }
+
+                    message.reply = async (content: Sendable | Sendable[], quote: boolean = false) => {
+                        if (!quote) {
+                            return await message.friend.sendMsg(content)
+                        }
+                        if (!Array.isArray(content)) {
+                            content = [content]
+                        }
+                        // insert reply element at the beginning
+                        content.unshift(segment.reply(message.message_id))
+                        return await message.friend.sendMsg(content)
+                    }
+
                 } else if (message.message_type === "group") {
                     // Group message
                     const group = this.pickGroup(message.group_id)
@@ -115,8 +133,28 @@ export class Client extends EventEmitter {
                             max_member_count: 0 // Placeholder, will be updated later
                         })
                     }
+                    message.reply = async (content: Sendable | Sendable[], quote: boolean = false) => {
+                        if (!quote) {
+                            return await message.group.sendMsg(content)
+                        }
+                        if (!Array.isArray(content)) {
+                            content = [content]
+                        }
+                        // insert reply element at the beginning
+                        content.unshift(segment.reply(message.message_id))
+                        return await message.group.sendMsg(content)
+                    }
+                    message.recall = async () => {
+                        try {
+                            await message.group.recallMsg(message.message_id)
+                            return true
+                        } catch (e) {
+                            console.error("[ERROR] Failed to recall message:", e)
+                            return false
+                        }
+                    }
                 }
-                this.emit("message", message)
+                this.em(`message.${message.message_type}.${message.sub_type ?? "normal"}`, message)
             }
 
 
@@ -141,10 +179,10 @@ export class Client extends EventEmitter {
             const invokeId = `Invoke::${Date.now()}:${action}:{${Math.random().toString(16).slice(8)}}`
 
             const timeoutHandle = setTimeout(() => {
-                this.removeAllListeners(invokeId)
+                this.invokeEmitter.removeAllListeners(invokeId)
                 reject(new Error(`Invoke ${action} timeout`))
             }, 10000)
-            this.once(invokeId, (response) => {
+            this.invokeEmitter.once(invokeId, (response) => {
                 clearTimeout(timeoutHandle)
                 if (response.retcode !== 0) {
                     return reject(new Error(`Invoke ${action} failed: ${response.msg}`))
@@ -240,7 +278,7 @@ export class Client extends EventEmitter {
             configurable: true,
         });
         while (true) {
-            this.emit(name, data);
+            (this as EventEmitter).emit(name, data);
             let i = name.lastIndexOf(".");
             if (i === -1)
                 break;

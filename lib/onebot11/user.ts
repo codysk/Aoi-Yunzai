@@ -30,10 +30,18 @@ export class User {
             return m;
         });
 
-        return await this.client.invoke("send_private_msg", {
+        let result = await this.client.invoke("send_private_msg", {
             user_id: this.user_id,
             message: message
         });
+        return result
+    }
+
+    async recallMsg(message_id: number): Promise<any> {
+        let result = await this.client.invoke("delete_msg", {
+            message_id: message_id
+        });
+        return result;
     }
 
     makeForwardMsg(data: {user_id: number|string, nickname: string, message: Sendable[]}[]) {

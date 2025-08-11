@@ -2,6 +2,7 @@ import fs from "fs";
 import { Client } from "./client.ts";
 import type { Sendable } from "./message.ts";
 import { segment } from "./segment.ts";
+import type { MessageRet } from "./event.ts";
 
 export class Group {
     public group_id: string;
@@ -27,7 +28,7 @@ export class Group {
         this.name = this.group_name || this.group_remark || `Group ${this.group_id}`;
     }
 
-    async sendMsg(message: Sendable | Sendable[]): Promise<any> {
+    async sendMsg(message: Sendable | Sendable[]): Promise<MessageRet> {
         if (!Array.isArray(message)) {
             message = [message];
         }
@@ -39,10 +40,24 @@ export class Group {
             return m;
         });
 
-        return await this.client.invoke("send_group_msg", {
+        let result =  await this.client.invoke("send_group_msg", {
             group_id: this.group_id,
             message: message
         });
+        if (!result || result.retcode !== 0) {
+            throw new Error(`send_msg failed for group_id: ${this.group_id}, message: ${message}`);
+        }
+        return result.data
+    }
+
+    async recallMsg(message_id: number): Promise<any> {
+        let result = await this.client.invoke("delete_msg", {
+            message_id: message_id
+        });
+        if (!result || result.retcode !== 0) {
+            throw new Error(`recall_msg failed for message_id: ${message_id}`);
+        }
+        return result.data;
     }
 
     makeForwardMsg(data: {user_id: number|string, nickname: string, message: Sendable[]}[]) {
