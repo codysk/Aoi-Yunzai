@@ -7,7 +7,7 @@ RUN { \
         libexpat1 libfontconfig1 libgbm1 libgcc1 libglib2.0-0 libgtk-3-0 libnspr4 \
         libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 \
         libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 \
-        libxrender1 libxss1 libxtst6  ; \
+        libxrender1 libxss1 libxtst6 ncat ; \
     sed -i 's/ZSH_THEME=".*"/ZSH_THEME="agnoster"/' ~/.zshrc ; \
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash ; \
     \. "$HOME/.nvm/nvm.sh" ; \

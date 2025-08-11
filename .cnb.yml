@@ -1,0 +1,31 @@
+$:
+  vscode:
+    - docker:
+        build: .ide/Dockerfile
+      services:
+        - docker
+        - vscode
+      stages:
+        - name: restore NapCat data
+          script: |
+            mkdir -p ~/.cnb/ide/data
+            cp -r ~/.cnb/ide/* /workspace/.ide
+
+        - name: pull miao-plugin
+          script: git clone --depth=1 https://github.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin
+
+        - name: pull TRSS-plugin
+          script: git clone --depth 1 https://github.com/TimeRainStarSky/TRSS-Plugin.git ./plugins/TRSS-Plugin
+
+        - name: start NapCat Sidecar
+          script: cd .ide && bash cnb_start_napcat.sh
+
+        - name: launch vscode
+          type: vscode:go
+
+      endStages:
+        - name: terminate NapCat
+          script: cd .ide && docker compose -f NapCat.yaml down
+
+        - name: save NapCat data
+          script: rm -rf ~/.cnb/data && cp -r .ide/data ~/.cnb/ide/
