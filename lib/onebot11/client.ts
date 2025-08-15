@@ -4,7 +4,7 @@ import { User } from "./user.ts";
 import { Group } from "./group.ts";
 import type { NodeElem, Sendable } from "./message.ts";
 import { segment } from "./segment.ts";
-import type { Event, EventMap, GroupMessageEvent, MessageEvent, PrivateMessageEvent } from "./event.ts";
+import type { Event, EventMap, GroupMessageEvent, PrivateMessageEvent, GroupPokeEvent, FriendPokeEvent } from "./event.ts";
 
 export class Client extends EventEmitter<EventMap> {
     private active_ws: WebSocket | null;
@@ -157,6 +157,35 @@ export class Client extends EventEmitter<EventMap> {
                 this.em(`message.${message.message_type}.${message.sub_type ?? "normal"}`, message)
             }
 
+            if (event.post_type === "notice") {
+                if ((event as GroupPokeEvent).group_id) {
+                    const pokeEvent = event as GroupPokeEvent;
+                    pokeEvent.notice_type = "group"
+                    const group = this.pickGroup(pokeEvent.group_id);
+                    if (group) {
+                        pokeEvent.group = group;
+                    } else {
+                        pokeEvent.group = new Group(this, {
+                            group_id: pokeEvent.group_id,
+                            group_name: "unknown",
+                        });
+                    }
+                    this.em(`notice.group.poke`, pokeEvent);
+                } else {
+                    const pokeEvent = event as FriendPokeEvent;
+                    pokeEvent.notice_type = "friend"
+                    const user = this.pickUser(pokeEvent.user_id);
+                    if (user) {
+                        pokeEvent.friend = user;
+                    } else {
+                        pokeEvent.friend = new User(this, {
+                            user_id: pokeEvent.user_id,
+                            nickname: "unknown",
+                        });
+                    }
+                    this.em(`notice.friend.poke`, pokeEvent);
+                }                            
+            }
 
         } catch (e) {
             console.error("[ERROR] Failed to parse message:", e)

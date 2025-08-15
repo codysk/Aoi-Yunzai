@@ -1,4 +1,4 @@
-export type Sendable = string | TextElem | ImageElem | NodeElem | FileElem | ReplyElem;
+export type Sendable = string | TextElem | ImageElem | NodeElem | FileElem | ReplyElem | AtElem;
 export interface TextElem {
     type: "text";
     data: {
@@ -30,5 +30,12 @@ export interface ReplyElem {
     type: "reply";
     data: {
         id: number;
+    };  
+};
+
+export interface AtElem {
+    type: "at";
+    data: {
+        qq: string;
     };  
 };

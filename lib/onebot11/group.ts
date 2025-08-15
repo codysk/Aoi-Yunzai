@@ -44,20 +44,15 @@ export class Group {
             group_id: this.group_id,
             message: message
         });
-        if (!result || result.retcode !== 0) {
-            throw new Error(`send_msg failed for group_id: ${this.group_id}, message: ${message}`);
-        }
-        return result.data
+        return result;
     }
 
     async recallMsg(message_id: number): Promise<any> {
         let result = await this.client.invoke("delete_msg", {
             message_id: message_id
         });
-        if (!result || result.retcode !== 0) {
-            throw new Error(`recall_msg failed for message_id: ${message_id}`);
-        }
-        return result.data;
+
+        return result;
     }
 
     makeForwardMsg(data: {user_id: number|string, nickname: string, message: Sendable[]}[]) {

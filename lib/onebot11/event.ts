@@ -31,12 +31,26 @@ export interface PrivateMessageEvent extends MessageEvent {
 	friend: User
 }
 
+/** 好友戳一戳事件 */
+export interface FriendPokeEvent extends PrivateMessageEvent {
+    /** 目标用户 */
+    target_id: number
+}
+
 /** 群消息事件 */
 export interface GroupMessageEvent extends MessageEvent {
 	/** 快速撤回 */
 	recall(): Promise<boolean>
 	/** 群对象 */
 	group: Group
+}
+
+/** 群戳一戳事件 */
+export interface GroupPokeEvent extends GroupMessageEvent {
+    /** 发送者 */
+    user_id: number
+    /** 目标用户 */
+    target_id: number
 }
 
 export interface EventMap {
@@ -61,5 +75,10 @@ export interface EventMap {
 
 	/** 所有消息 */
 	"message": [PrivateMessageEvent | GroupMessageEvent]
+
+	/** 好友戳一戳 */
+	"notice.friend.poke": [FriendPokeEvent]
+	/** 群戳一戳 */
+	"notice.group.poke": [GroupPokeEvent]
 
 }

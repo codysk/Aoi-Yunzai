@@ -1,5 +1,5 @@
 import fs from "fs";
-import type { NodeElem, Sendable,  TextElem, ReplyElem} from "./message.ts";
+import type { NodeElem, Sendable, TextElem, ReplyElem, AtElem} from "./message.ts";
 
 export const segment = {
     text: (text: string): TextElem => {
@@ -62,6 +62,14 @@ export const segment = {
             type: "reply",
             data: {
                 id: id
+            }
+        }
+    },
+    at: (qq: string): AtElem => {
+        return {
+            type: "at",
+            data: {
+                qq: qq
             }
         }
     }
