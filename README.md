@@ -1,10 +1,8 @@
-# Miao-Yunzai v3
+# Aoi-Yunzai v3
 
-基于乐神版[云崽v3.0](https://gitee.com/le-niao/Yunzai-Bot) 改造，需要同时安装[miao-plugin](https://github.com/yoimiya-kokomi/miao-plugin.git) 
+基于喵版[云崽v3.0](https://github.com/yoimiya-kokomi/Miao-Yunzai) 改造，需要同时安装[miao-plugin](https://github.com/yoimiya-kokomi/miao-plugin.git) 
 
-对数据结构进行了改造，无法直接迁回原版Yunzai，请根据自己需求情况慎重安装！
-
-使用[icqq](https://github.com/icqqjs/icqq) 登录，防止oicq可能出现的低版本问题
+不再支持 QQ 登录，转为使用 OneBot-V11 **正向WebSocket** 协议连接 QQ 机器人框架（如 [NapCat](https://napneko.github.io/))
 
 ## 使用方法
 
@@ -16,21 +14,49 @@
 
 > 推荐使用NVM对Node.js进行版本管理
 
+### 运行QQ机器人框架
+> 参考具体的框架文档
+> 以下以NapCat作为示例
+```
+cat <<<EOF >docker-compose.yml
+services:
+  napcat:
+    image: mlikiowa/napcat-docker:latest
+    container_name: napcat
+    restart: always
+    network_mode: bridge
+    mac_address: 02:42:ac:11:00:02  # 添加MAC地址固化配置
+    
+    ports:
+      - 3001:3001
+      - 6099:6099
+    
+    volumes:
+      - ./data/napcat/config:/app/napcat/config
+      - ./data/ntqq:/app/.config/QQ
+EOF
+
+docker compose up -d
+```
+访问 http://localhost:6099 登录QQ
+
+在网络配置中创建 **正向Websocket** 服务于 3001 端口。 
+
 ### 克隆项目
 
-> 请根据网络情况选择Github安装或Gitee安装
+> 请根据网络情况选择Github安装或CNB/Gitee安装
 
 ```sh
 # 使用 Github 
-git clone --depth=1 https://github.com/yoimiya-kokomi/Miao-Yunzai.git
-cd Miao-Yunzai 
+git clone --depth=1 https://github.com/codysk/Aoi-Yunzai.git
+cd Aoi-Yunzai 
 git clone --depth=1 https://github.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/
 ```
 
 ```sh
-# 使用Gitee
-git clone --depth=1 https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git
-cd Miao-Yunzai 
+# 使用CNB/Gitee
+git clone --depth=1 https://cnb.cool/umiaoi/Aoi-Yunzai.git
+cd Aoi-Yunzai 
 git clone --depth=1 https://gitee.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/
 ```
 
@@ -53,16 +79,8 @@ pnpm install -P
 
 ### 运行
 
-> 首次运行按提示输入登录
-
 ```sh
 npm run app
-```
-
-### 登录
-
-```sh
-npm run login
 ```
 
 ### 托管
@@ -74,8 +92,9 @@ npm run start
 
 |                           Nickname                            | Contribution     |
 |:-------------------------------------------------------------:|------------------|
+|      [Miao-Yunzai](https://gitee.com/yoimiya-kokomi/Miao-Yunzai)      | 喵版Yunzai V3 |
 |      [Yunzai v3.0](https://gitee.com/le-niao/Yunzai-Bot)      | 乐神的Yunzai-Bot V3 |
 | [GardenHamster](https://github.com/GardenHamster/GenshinPray) | 模拟抽卡背景素材来源       |
 |      [西风驿站](https://bbs.mihoyo.com/ys/collection/839181)      | 角色攻略图来源          |
 |     [米游社友人A](https://bbs.mihoyo.com/ys/collection/428421)     | 角色突破素材图来源        |
-| [icqq](https://github.com/icqqjs/icqq) | ICQQ             |
+
