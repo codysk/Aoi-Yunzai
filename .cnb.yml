@@ -19,6 +19,9 @@ $:
 
         - name: start NapCat Sidecar
           script: cd .ide && bash cnb_start_napcat.sh
+        
+        - name: set github repo
+          script: git remote add github https://github.com/codysk/Aoi-Yunzai.git
 
         - name: launch vscode
           type: vscode:go
